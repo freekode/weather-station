@@ -3,6 +3,7 @@
 class RTC {
   public:
     RTC_DS1307 rtc;
+    // rtc.adjust(DateTime(2017, 12, 2, 11, 50, 5));
     void adjust(const DateTime& dt);
     RTC();
     uint32_t unixtime();
