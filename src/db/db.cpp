@@ -1,18 +1,29 @@
 #include "db.h"
+#include <stdlib.h>
 
-DbEntry DB::last() {
-  return database[nextDbIndex - 1];
+Database *Database::s_instance = 0;
+
+char* DbEntry::toString() {
+  char out[50];
+
+  
+
+  return out;
 }
 
-DbEntry* DB::all() {
-  return database;
+DbEntry Database::last() {
+  return storage[nextDbIndex - 1];
 }
 
-void DB::add(DbEntry newEntry) {
+DbEntry* Database::all() {
+  return storage;
+}
+
+void Database::add(DbEntry newEntry) {
   if (nextDbIndex > IN_MEMORY_DB_SIZE) {
     nextDbIndex = 0;
   }
 
-  database[nextDbIndex] = newEntry;
+  storage[nextDbIndex] = newEntry;
   nextDbIndex++;
 }
