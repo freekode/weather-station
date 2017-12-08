@@ -1,30 +1,24 @@
 #include "command.h"
 #include "../db/db.h"
 
-String commandHandler(String command) {
+String runCommand(String command) {
   command.trim();
 
-  Serial.print("command: ");
-  Serial.println(command);
-
-  String output;
-  if (command.equals("last")) {
-    output = commandLast();
+  if (command.equals("test")) {
+    return commandTest();
+  } else if (command.equals("last")) {
+    return commandLast();
   } else if (command.equals("history")) {
-    output = commandHistory();
-  } else if (command.equals("test")) {
-    output = commandTest();
-  } else {
-    output = "unknown command";
+    return commandHistory();
   }
 
-  return output;
+  return "unknown command";
 }
 
 String commandLast() {
   DbEntry entry = Database::getInstance()->last();
 
-  return entry.toString();
+  return "lst";
 }
 
 String commandHistory() {
@@ -35,7 +29,7 @@ String commandHistory() {
     entry.toString();
   }
 
-  return "";
+  return "hist";
 }
 
 String commandTest() {

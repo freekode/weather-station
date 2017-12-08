@@ -6,8 +6,6 @@ Database *Database::s_instance = 0;
 char* DbEntry::toString() {
   char out[50];
 
-  
-
   return out;
 }
 

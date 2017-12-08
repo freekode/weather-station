@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-String commandHandler(String command);
+String runCommand(String command);
 String commandLast();
 String commandHistory();
 String commandTest();
