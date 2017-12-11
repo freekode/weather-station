@@ -11,8 +11,8 @@ class SerialHelper {
     SerialHelper(Stream &softwareSerial, Stream &btSerial):
       softwareSerial(softwareSerial),
       btSerial(btSerial) {
-        btInputString.reserve(200);
-        softwareInputString.reserve(200);
+        btInputString.reserve(10);
+        softwareInputString.reserve(10);
       };
     void sendAtCommand(const char *command);
     String receiveFromBt();

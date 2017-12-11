@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <stdint.h>
 #include "../config.h"
 
@@ -6,21 +7,21 @@ class DbEntry {
     uint32_t timestamp;
     float temperature;
     float temperature1;
-    float humidity;
-    float pressure;
+    int humidity;
+    int pressure;
     DbEntry() {};
     DbEntry(
       uint32_t timestamp,
       float temperature,
       float temperature1,
-      float humidity,
-      float pressure):
+      int humidity,
+      int pressure):
         timestamp(timestamp),
         temperature(temperature),
         temperature1(temperature1),
         humidity(humidity),
         pressure(pressure) {};
-    char* toString();
+    String toString();
 };
 
 class Database {

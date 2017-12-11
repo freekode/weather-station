@@ -16,45 +16,65 @@ RTC rtc;
 
 SerialHelper serialHelper(Serial, BTSerial);
 
+uint32_t nextOccurence = 0;
+
 DbEntry getDbEntry() {
   return DbEntry(
     rtc.unixtime(),
     dht.temperature(),
     bmp.temperature(),
     dht.humidity(),
-    bmp.pressure()
+    bmp.pressure() / 100
   );
-}
-
-void printCommandOutput(String result) {
-  Serial.println(result);
-  BTSerial.print(result);
 }
 
 void setup(void) {
   Serial.begin(9600);
   BTSerial.begin(9600);
 
-  Serial.print("Sketch:   "); Serial.println(__FILE__);
-  Serial.print("Uploaded: "); Serial.println(__DATE__);
-  Serial.println("ws01 init");
+  Serial.print(F("Sketch:   ")); Serial.println(__FILE__);
+  Serial.print(F("Uploaded: ")); Serial.println(__DATE__);
+  Serial.println(F("ws01 init"));
 
   serialHelper.sendAtCommand("AT");
 }
 
 void loop(void) {
-  // saving to database
-  Database::getInstance()->add(getDbEntry());
+  if (nextOccurence == 0) {
+    nextOccurence = rtc.unixtime();
+  }
 
-  String input = serialHelper.receiveFromSoftware();
-  if (input.length() > 0) {
-    input.trim();
+  if (rtc.unixtime() >= nextOccurence) {
+    // saving to database
+    Database::getInstance()->add(getDbEntry());
 
-    Serial.print("intput: ");
-    Serial.println(input);
+    nextOccurence += WEATHER_DATA_SAVE_DELAY_SEC;
+  }
 
-    Serial.print("output: ");
-    Serial.println(runCommand(input));
+  String softwareInput = serialHelper.receiveFromSoftware();
+  if (softwareInput.length() > 0) {
+    softwareInput.trim();
+
+    Serial.print(F("input: "));
+    Serial.println(softwareInput);
+
+    Serial.print(F("output: "));
+
+    String res = runCommand(softwareInput);
+    Serial.println(res);
+  }
+
+  String btInput = serialHelper.receiveFromBt();
+  if (btInput.length() > 0) {
+    btInput.trim();
+
+    Serial.print(F("bt input: "));
+    Serial.println(btInput);
+
+    String btOutput = runCommand(btInput);
+    Serial.print(F("bt output: "));
+    Serial.println(btOutput);
+    BTSerial.print(btOutput);
   }
 
   // main delay for receiving commands
