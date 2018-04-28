@@ -1,5 +1,7 @@
 #include "rtc.h"
 
+RTC *RTC::s_instance = 0;
+
 RTC::RTC() {
   rtc.begin();
 }
@@ -13,10 +15,6 @@ void RTC::adjust(const DateTime& dt) {
   rtc.adjust(dt);
 }
 
-void RTC::adjustToUploadDate() {
-  adjust(DateTime(F(__DATE__), F(__TIME__)));
-}
-
 DateTime RTC::now() {
   return rtc.now();
 }
@@ -25,11 +23,20 @@ String RTC::getDateStr() {
   DateTime dateTime = now();
 
   String date =
-    addLeadingZero(dateTime.day()) +
-    '/' +
-    addLeadingZero(dateTime.month()) +
+    getDateWithoutYearStr() +
     '/' +
     String(dateTime.yearShort());
+
+  return date;
+}
+
+String RTC::getDateWithoutYearStr() {
+  DateTime dateTime = now();
+
+  String date =
+    addLeadingZero(dateTime.day()) +
+    '/' +
+    addLeadingZero(dateTime.month());
 
   return date;
 }

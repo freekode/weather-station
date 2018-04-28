@@ -1,50 +1,34 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include <AltSoftSerial.h>
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
 #include "config.h"
-#include "serial_helper/serial_helper.h"
-#include "command/command.h"
-#include "dht_sensor/dht_sensor.h"
-#include "bmp_sensor/bmp_sensor.h"
-#include "rtc/rtc.h"
-#include "db/db.h"
+#include "main.h"
 
-LiquidCrystal_I2C lcd(0x27, 16, 4);
+void setup(void) {
+  Serial.begin(SERIAL_BITRATE);
+  BTSerial.begin(SERIAL_BITRATE);
 
-AltSoftSerial BTSerial;
-DHT_Sensor dht;
-BMP_Sensor bmp;
-RTC rtc;
+  initIntervals();
+  printUploadTime();
 
-SerialHelper softwareSerial(Serial);
+  // serialHelper.sendAtCommand("AT");
+  // rtc->adjust(DateTime(F(__DATE__), F(__TIME__)));
 
-uint32_t saveWeatherNextTime = 0;
-uint32_t showTimeNextTime = 0;
+	lcd.begin();
+  lcd.backlight();
+  lcd.createChar(0, clock);
+  lcd.createChar(1, celsius);
+  lcd.home();
 
-uint8_t clock[8] = {0x0, 0xe, 0x15, 0x17, 0x11, 0xe, 0x0};
-
-DbEntry getDbEntry() {
-  return DbEntry(
-    rtc.unixtime(),
-    dht.temperature(),
-    bmp.temperature(),
-    dht.humidity(),
-    bmp.pressure() / 100
-  );
+  softwareSerial.println(F("started"));
 }
 
-void saveWeather() {
-  if (saveWeatherNextTime == 0) {
-    saveWeatherNextTime = rtc.unixtime();
-  }
+void loop(void) {
+  saveWeather();
+  processIO();
+  printTime();
 
-  if (rtc.unixtime() >= saveWeatherNextTime) {
-    Database::getInstance()->add(getDbEntry());
-
-    saveWeatherNextTime += WEATHER_DATA_SAVE_DELAY_SEC;
-  }
+  // main delay for receiving commands
+  delay(MAIN_DELAY_MS);
 }
 
 void processIO() {
@@ -57,61 +41,45 @@ void processIO() {
 
     softwareSerial.print(F("output: "));
 
-    String res = runCommand(softwareInput);
+    String res = command.runCommand(softwareInput);
     softwareSerial.println(res);
   }
-
-  // String btInput = serialHelper.receiveFromBt();
-  // if (btInput.length() > 0) {
-  //   btInput.trim();
-  //
-  //   Serial.print(F("bt input: "));
-  //   Serial.println(btInput);
-  //
-  //   String btOutput = runCommand(btInput);
-  //   Serial.print(F("bt output: "));
-  //   Serial.println(btOutput);
-  //   BTSerial.print(btOutput);
-  // }
 }
 
 void printTime() {
-  lcd.setCursor(0, 0);
-  lcd.write(0);
+  // lcd.setCursor(0, 0);
+  // lcd.write(0);
 
-  if (showTimeNextTime == 0) {
-    showTimeNextTime = rtc.unixtime();
-  }
+  if (rtc->unixtime() >= showTimeNextTime) {
+    // lcd.setCursor(3, 0);
+    lcd.setCursor(0, 0);
+    lcd.print(rtc->getDateWithoutYearStr());
+    lcd.setCursor(8, 0);
+    lcd.print(rtc->getTimeStr());
 
-  if (rtc.unixtime() >= showTimeNextTime) {
-    lcd.setCursor(3, 0);
-    lcd.print(rtc.getFullDateStr());
-
-    showTimeNextTime += SHOW_TIME_DELAY_SEC;
+    showTimeNextTime = rtc->unixtime() + SHOW_TIME_DELAY_SEC;
   }
 }
 
-void setup(void) {
-  Serial.begin(SERIAL_BITRATE);
-  BTSerial.begin(SERIAL_BITRATE);
+void saveWeather() {
+  if (rtc->unixtime() >= saveWeatherNextTime) {
+    database->add(getDbEntry());
 
-  softwareSerial.print(F("Sketch:   ")); softwareSerial.println(__FILE__);
-  softwareSerial.print(F("Uploaded: ")); softwareSerial.println(__DATE__);
-  softwareSerial.println(F("ws01 init"));
+    printWeather();
 
-  // serialHelper.sendAtCommand("AT");
-
-	lcd.begin();
-  lcd.backlight();
-  lcd.createChar(0, clock);
-  lcd.home();
+    saveWeatherNextTime = rtc->unixtime() + WEATHER_DATA_SAVE_DELAY_SEC;
+  }
 }
 
-void loop(void) {
-  saveWeather();
-  processIO();
-  printTime();
+void printWeather() {
+  DbEntry entry = database->last();
 
-  // main delay for receiving commands
-  delay(MAIN_DELAY_MS);
+  lcd.setCursor(0, 1);
+  lcd.print(String((entry.temperature + entry.temperature1) / 2, 1));
+  // lcd.write(1);
+  lcd.print(" ");
+  lcd.print(entry.humidity);
+  lcd.print("% ");
+  lcd.print(entry.pressure);
+  lcd.print("hPa");
 }

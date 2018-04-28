@@ -1,7 +1,15 @@
 #include <Arduino.h>
 
-String runCommand(String command);
-String commandLast();
-String commandHistory();
-String commandTest();
-String commandFreeRam();
+class Command {
+  public:
+    String runCommand(String);
+  private:
+    int PARAMS_LENGTH = 30;
+    
+    String commandLast();
+    String commandHistory();
+    String commandTest();
+    String commandFreeRam();
+    String commandSetTime(char*[]);
+    void parseCommand(String, char*[]);
+};

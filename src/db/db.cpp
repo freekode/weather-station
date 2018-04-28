@@ -4,16 +4,17 @@
 Database *Database::s_instance = 0;
 
 String DbEntry::toString() {
-  char tempString[6];
-  char temp1String[6];
+  String out = String(timestamp) +
+    ',' +
+    String(temperature, 1) +
+    ',' +
+    String(temperature1, 1) +
+    ',' +
+    String(humidity) +
+    ',' +
+    String(pressure);
 
-  dtostrf(temperature, 4, 2, tempString);
-  dtostrf(temperature1, 4, 2, temp1String);
-
-  char out[50];
-  sprintf(out, "%lu,%s,%s,%i,%i", timestamp, tempString, temp1String, humidity, pressure);
-
-  return String(out);
+  return out;
 }
 
 DbEntry Database::last() {
