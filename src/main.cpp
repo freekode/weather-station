@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <AltSoftSerial.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include "config.h"
 #include "serial_helper/serial_helper.h"
 #include "command/command.h"
@@ -9,11 +11,7 @@
 #include "rtc/rtc.h"
 #include "db/db.h"
 
-
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
-
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(0x27, 16, 4);
 
 AltSoftSerial BTSerial;
 DHT_Sensor dht;
@@ -22,7 +20,10 @@ RTC rtc;
 
 SerialHelper softwareSerial(Serial);
 
-uint32_t nextOccurence = 0;
+uint32_t saveWeatherNextTime = 0;
+uint32_t showTimeNextTime = 0;
+
+uint8_t clock[8] = {0x0, 0xe, 0x15, 0x17, 0x11, 0xe, 0x0};
 
 DbEntry getDbEntry() {
   return DbEntry(
@@ -35,15 +36,14 @@ DbEntry getDbEntry() {
 }
 
 void saveWeather() {
-  if (nextOccurence == 0) {
-    nextOccurence = rtc.unixtime();
+  if (saveWeatherNextTime == 0) {
+    saveWeatherNextTime = rtc.unixtime();
   }
 
-  if (rtc.unixtime() >= nextOccurence) {
-    // saving to database
+  if (rtc.unixtime() >= saveWeatherNextTime) {
     Database::getInstance()->add(getDbEntry());
 
-    nextOccurence += WEATHER_DATA_SAVE_DELAY_SEC;
+    saveWeatherNextTime += WEATHER_DATA_SAVE_DELAY_SEC;
   }
 }
 
@@ -75,6 +75,22 @@ void processIO() {
   // }
 }
 
+void printTime() {
+  lcd.setCursor(0, 0);
+  lcd.write(0);
+
+  if (showTimeNextTime == 0) {
+    showTimeNextTime = rtc.unixtime();
+  }
+
+  if (rtc.unixtime() >= showTimeNextTime) {
+    lcd.setCursor(3, 0);
+    lcd.print(rtc.getFullDateStr());
+
+    showTimeNextTime += SHOW_TIME_DELAY_SEC;
+  }
+}
+
 void setup(void) {
   Serial.begin(SERIAL_BITRATE);
   BTSerial.begin(SERIAL_BITRATE);
@@ -86,16 +102,15 @@ void setup(void) {
   // serialHelper.sendAtCommand("AT");
 
 	lcd.begin();
-
-  lcd.noBacklight();
-  delay(2000);
-	lcd.backlight();
-	lcd.print("Hello, world!");
+  lcd.backlight();
+  lcd.createChar(0, clock);
+  lcd.home();
 }
 
 void loop(void) {
   saveWeather();
   processIO();
+  printTime();
 
   // main delay for receiving commands
   delay(MAIN_DELAY_MS);

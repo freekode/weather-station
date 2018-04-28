@@ -46,7 +46,7 @@ size_t SerialHelper::print(const String &s) {
 }
 
 size_t SerialHelper::println(const __FlashStringHelper *ifsh) {
-  return serial.print(ifsh);
+  return serial.println(ifsh);
 }
 
 size_t SerialHelper::println(const String &s) {

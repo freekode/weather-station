@@ -36,6 +36,7 @@ public:
     DateTime (const char* date, const char* time);
     DateTime (const __FlashStringHelper* date, const __FlashStringHelper* time);
     uint16_t year() const       { return 2000 + yOff; }
+    uint16_t yearShort() const  { return yOff; }
     uint8_t month() const       { return m; }
     uint8_t day() const         { return d; }
     uint8_t hour() const        { return hh; }
@@ -44,7 +45,7 @@ public:
     uint8_t dayOfTheWeek() const;
 
     // 32-bit times as seconds since 1/1/2000
-    long secondstime() const;   
+    long secondstime() const;
     // 32-bit times as seconds since 1/1/1970
     uint32_t unixtime(void) const;
 
