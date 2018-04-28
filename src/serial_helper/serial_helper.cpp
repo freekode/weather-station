@@ -1,41 +1,35 @@
 #include "serial_helper.h"
 
-void SerialHelper::sendAtCommand(const char *command) {
-  softwareSerial.print("BT send: ");
-  softwareSerial.println(command);
-
-  btSerial.println(command);
+String SerialHelper::sendAtCommand(const char *command) {
+  serial.println(command);
   delay(100);
 
   char reply[100];
   int i = 0;
-  while (btSerial.available()) {
-    reply[i] = btSerial.read();
+  while (serial.available()) {
+    reply[i] = serial.read();
     i += 1;
   }
 
   reply[i] = '\0';
 
-  softwareSerial.print("BT received: ");
-  softwareSerial.print(reply);
-  softwareSerial.println("Reply end");
+  return String(reply);
 }
 
-
-String SerialHelper::receiveFromBt() {
-  if (btSerial.available()) {
-    char inChar = btSerial.read();
-    btInputString += inChar;
+String SerialHelper::receive() {
+  if (serial.available()) {
+    char inChar = serial.read();
+    inputString += inChar;
     if (inChar == '\n') {
-      btInputComplete = true;
+      inputComplete = true;
     }
   }
 
-  if (btInputComplete) {
-    String input = String(btInputString);
+  if (inputComplete) {
+    String input = String(inputString);
 
-    btInputString = "";
-    btInputComplete = false;
+    inputString = "";
+    inputComplete = false;
 
     return input;
   }
@@ -43,23 +37,18 @@ String SerialHelper::receiveFromBt() {
   return "";
 }
 
-String SerialHelper::receiveFromSoftware() {
-  if (softwareSerial.available()) {
-    char inChar = softwareSerial.read();
-    softwareInputString += inChar;
-    if (inChar == '\n') {
-      softwareInputComplete = true;
-    }
-  }
+size_t SerialHelper::print(const __FlashStringHelper *ifsh) {
+  return serial.print(ifsh);
+}
 
-  if (softwareInputComplete) {
-    String input = String(softwareInputString);
+size_t SerialHelper::print(const String &s) {
+  return serial.print(s);
+}
 
-    softwareInputString = "";
-    softwareInputComplete = false;
+size_t SerialHelper::println(const __FlashStringHelper *ifsh) {
+  return serial.print(ifsh);
+}
 
-    return input;
-  }
-
-  return "";
+size_t SerialHelper::println(const String &s) {
+  return serial.println(s);
 }

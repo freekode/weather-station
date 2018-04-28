@@ -9,12 +9,18 @@
 #include "rtc/rtc.h"
 #include "db/db.h"
 
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 AltSoftSerial BTSerial;
 DHT_Sensor dht;
 BMP_Sensor bmp;
 RTC rtc;
 
-SerialHelper serialHelper(Serial, BTSerial);
+SerialHelper softwareSerial(Serial);
 
 uint32_t nextOccurence = 0;
 
@@ -28,18 +34,7 @@ DbEntry getDbEntry() {
   );
 }
 
-void setup(void) {
-  Serial.begin(9600);
-  BTSerial.begin(9600);
-
-  Serial.print(F("Sketch:   ")); Serial.println(__FILE__);
-  Serial.print(F("Uploaded: ")); Serial.println(__DATE__);
-  Serial.println(F("ws01 init"));
-
-  serialHelper.sendAtCommand("AT");
-}
-
-void loop(void) {
+void saveWeather() {
   if (nextOccurence == 0) {
     nextOccurence = rtc.unixtime();
   }
@@ -50,32 +45,57 @@ void loop(void) {
 
     nextOccurence += WEATHER_DATA_SAVE_DELAY_SEC;
   }
+}
 
-  String softwareInput = serialHelper.receiveFromSoftware();
+void processIO() {
+  String softwareInput = softwareSerial.receive();
   if (softwareInput.length() > 0) {
     softwareInput.trim();
 
-    Serial.print(F("input: "));
-    Serial.println(softwareInput);
+    softwareSerial.print(F("input: "));
+    softwareSerial.println(softwareInput);
 
-    Serial.print(F("output: "));
+    softwareSerial.print(F("output: "));
 
     String res = runCommand(softwareInput);
-    Serial.println(res);
+    softwareSerial.println(res);
   }
 
-  String btInput = serialHelper.receiveFromBt();
-  if (btInput.length() > 0) {
-    btInput.trim();
+  // String btInput = serialHelper.receiveFromBt();
+  // if (btInput.length() > 0) {
+  //   btInput.trim();
+  //
+  //   Serial.print(F("bt input: "));
+  //   Serial.println(btInput);
+  //
+  //   String btOutput = runCommand(btInput);
+  //   Serial.print(F("bt output: "));
+  //   Serial.println(btOutput);
+  //   BTSerial.print(btOutput);
+  // }
+}
 
-    Serial.print(F("bt input: "));
-    Serial.println(btInput);
+void setup(void) {
+  Serial.begin(SERIAL_BITRATE);
+  BTSerial.begin(SERIAL_BITRATE);
 
-    String btOutput = runCommand(btInput);
-    Serial.print(F("bt output: "));
-    Serial.println(btOutput);
-    BTSerial.print(btOutput);
-  }
+  softwareSerial.print(F("Sketch:   ")); softwareSerial.println(__FILE__);
+  softwareSerial.print(F("Uploaded: ")); softwareSerial.println(__DATE__);
+  softwareSerial.println(F("ws01 init"));
+
+  // serialHelper.sendAtCommand("AT");
+
+	lcd.begin();
+
+  lcd.noBacklight();
+  delay(2000);
+	lcd.backlight();
+	lcd.print("Hello, world!");
+}
+
+void loop(void) {
+  saveWeather();
+  processIO();
 
   // main delay for receiving commands
   delay(MAIN_DELAY_MS);

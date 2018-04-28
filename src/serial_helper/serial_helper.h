@@ -1,20 +1,19 @@
 #include <Arduino.h>
 
 class SerialHelper {
-  Stream &softwareSerial;
-  Stream &btSerial;
-  String btInputString = "";
-  boolean btInputComplete = false;
-  String softwareInputString = "";
-  boolean softwareInputComplete = false;
+  Stream &serial;
+  String inputString = "";
+  boolean inputComplete = false;
+
   public:
-    SerialHelper(Stream &softwareSerial, Stream &btSerial):
-      softwareSerial(softwareSerial),
-      btSerial(btSerial) {
-        btInputString.reserve(10);
-        softwareInputString.reserve(10);
+    SerialHelper(Stream &serial):
+      serial(serial) {
+        inputString.reserve(10);
       };
-    void sendAtCommand(const char *command);
-    String receiveFromBt();
-    String receiveFromSoftware();
+    String sendAtCommand(const char *command);
+    String receive();
+    size_t print(const __FlashStringHelper *);
+    size_t print(const String &);
+    size_t println(const __FlashStringHelper *);
+    size_t println(const String &);
 };
