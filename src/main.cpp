@@ -3,83 +3,91 @@
 #include "config.h"
 #include "main.h"
 
-void setup(void) {
-  Serial.begin(SERIAL_BITRATE);
-  BTSerial.begin(SERIAL_BITRATE);
+void setup(void)
+{
+	Serial.begin(SERIAL_BITRATE);
+	BTSerial.begin(SERIAL_BITRATE);
 
-  initIntervals();
-  printUploadTime();
+	printUploadTime();
+	initIntervals();
+	sendAtCommand("AT");
+	sendAtCommand("AT+NAME");
+	sendAtCommand("AT+ADDR");
 
-  // serialHelper.sendAtCommand("AT");
-  // rtc->adjust(DateTime(F(__DATE__), F(__TIME__)));
+	// serialHelper.sendAtCommand("AT");
+	// rtc->adjust(DateTime(F(__DATE__), F(__TIME__)));
 
 	lcd.begin();
-  lcd.backlight();
-  lcd.createChar(0, clock);
-  lcd.createChar(1, celsius);
-  lcd.home();
+	lcd.backlight();
+	lcd.createChar(0, clock);
+	lcd.createChar(1, celsius);
+	lcd.home();
 
-  softwareSerial.println(F("started"));
+	softwareSerial.println(F("started"));
 }
 
-void loop(void) {
-  saveWeather();
-  processIO();
-  printTime();
+void loop(void)
+{
+	saveWeather();
+	processIO();
+	printTime();
 
-  // main delay for receiving commands
-  delay(MAIN_DELAY_MS);
+	// main delay for receiving commands
+	delay(MAIN_DELAY_MS);
 }
 
-void processIO() {
-  String softwareInput = softwareSerial.receive();
-  if (softwareInput.length() > 0) {
-    softwareInput.trim();
+void processIO()
+{
+	String softwareInput = softwareSerial.receive();
+	if (softwareInput.length() > 0)
+	{
+		softwareInput.trim();
 
-    softwareSerial.print(F("input: "));
-    softwareSerial.println(softwareInput);
+		softwareSerial.print(F("input: "));
+		softwareSerial.println(softwareInput);
 
-    softwareSerial.print(F("output: "));
+		softwareSerial.print(F("output: "));
 
-    String res = command.runCommand(softwareInput);
-    softwareSerial.println(res);
-  }
+		String res = command.runCommand(softwareInput);
+		softwareSerial.println(res);
+	}
 }
 
-void printTime() {
-  // lcd.setCursor(0, 0);
-  // lcd.write(0);
+void printTime()
+{
+	if (rtc->unixtime() >= showTimeNextTime)
+	{
+		lcd.setCursor(0, 0);
+		lcd.print(rtc->getDateWithoutYearStr());
+		lcd.setCursor(8, 0);
+		lcd.print(rtc->getTimeStr());
 
-  if (rtc->unixtime() >= showTimeNextTime) {
-    // lcd.setCursor(3, 0);
-    lcd.setCursor(0, 0);
-    lcd.print(rtc->getDateWithoutYearStr());
-    lcd.setCursor(8, 0);
-    lcd.print(rtc->getTimeStr());
-
-    showTimeNextTime = rtc->unixtime() + SHOW_TIME_DELAY_SEC;
-  }
+		showTimeNextTime = rtc->unixtime() + SHOW_TIME_DELAY_SEC;
+	}
 }
 
-void saveWeather() {
-  if (rtc->unixtime() >= saveWeatherNextTime) {
-    database->add(getDbEntry());
+void saveWeather()
+{
+	if (rtc->unixtime() >= saveWeatherNextTime)
+	{
+		database->add(getDbEntry());
 
-    printWeather();
+		printWeather();
 
-    saveWeatherNextTime = rtc->unixtime() + WEATHER_DATA_SAVE_DELAY_SEC;
-  }
+		saveWeatherNextTime = rtc->unixtime() + WEATHER_DATA_SAVE_DELAY_SEC;
+	}
 }
 
-void printWeather() {
-  DbEntry entry = database->last();
+void printWeather()
+{
+	DbEntry entry = database->last();
 
-  lcd.setCursor(0, 1);
-  lcd.print(String((entry.temperature + entry.temperature1) / 2, 1));
-  // lcd.write(1);
-  lcd.print(" ");
-  lcd.print(entry.humidity);
-  lcd.print("% ");
-  lcd.print(entry.pressure);
-  lcd.print("hPa");
+	lcd.setCursor(0, 1);
+	lcd.print(String((entry.temperature + entry.temperature1) / 2, 1));
+	// lcd.write(1);
+	lcd.print(" ");
+	lcd.print(entry.humidity);
+	lcd.print("% ");
+	lcd.print(entry.pressure);
+	lcd.print("hPa");
 }
