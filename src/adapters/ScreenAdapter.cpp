@@ -17,15 +17,15 @@ void ScreenAdapter::printDateTime(String date, String time)
     lcd.print(time);
 }
 
-void ScreenAdapter::printSatus(WeatherStatus weatherStatus)
+void ScreenAdapter::printSatus(EnvironmentStatus environmentStatus)
 {
     lcd.setCursor(0, 1);
-    lcd.print(String(weatherStatus.getTemperature(), 1));
+    lcd.print(String(environmentStatus.getTemperature(), 1));
     lcd.write(1);
     lcd.print(F(" "));
-    lcd.print((int)weatherStatus.getHumidity());
-    lcd.print(F("%  "));
-    lcd.print(String(weatherStatus.getPressure() / 100, 1));
+    lcd.print((int)environmentStatus.getHumidity());
+    lcd.print(F("% "));
+    lcd.print(String(environmentStatus.getPressure() / 100, 1));
     // lcd.print(F("hPa"));
 }
 

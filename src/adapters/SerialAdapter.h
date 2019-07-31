@@ -1,27 +1,17 @@
 #ifndef SerialAdapter_H
 #define SerialAdapter_H
 
-#include <Arduino.h>
+#include <adapters/IOAdapter.h>
 
-#define SERIAL_BITRATE 9600
-
-class SerialAdapter
+class SerialAdapter : public IOAdapter
 {
 public:
-	SerialAdapter(Stream &serial);
-	void begin();
-	virtual String receive();
+	SerialAdapter(Stream &serial) : IOAdapter(serial){};
+	String receive();
 	size_t print(const __FlashStringHelper *);
 	size_t print(const String &);
 	size_t println(const __FlashStringHelper *);
 	size_t println(const String &);
-
-protected:
-	Stream &serial;
-
-private:
-	String inputString = "";
-	boolean inputComplete = false;
 };
 
 #endif

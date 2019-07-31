@@ -14,8 +14,7 @@ public:
 	float altitude();
 
 private:
-	boolean initialized = false;
-	Adafruit_BMP085 bmp;
+	Adafruit_BMP085 bmp = Adafruit_BMP085();
 };
 
 #endif

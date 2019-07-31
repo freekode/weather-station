@@ -1,7 +1,7 @@
 #ifndef TimeJobExecuter_H
 #define TimeJobExecuter_H
 
-#include <IntervalJobExecuter.h>
+#include <jobexecuter/IntervalJobExecuter.h>
 #include "../adapters/ScreenAdapter.h"
 #include "../adapters/RTCTimeAdapter.h"
 #include "../devices/rtc/rtc.h"

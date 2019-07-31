@@ -2,7 +2,7 @@
 #define ScreenAdapter_H
 
 #include <LiquidCrystal_I2C.h>
-#include <WeatherStatus.h>
+#include <environmentstatus/EnvironmentStatus.h>
 #include <Arduino.h>
 
 class ScreenAdapter
@@ -16,7 +16,7 @@ public:
     ScreenAdapter(){};
     void begin();
     void printDateTime(String date, String time);
-    void printSatus(WeatherStatus weatherStatus);
+    void printSatus(EnvironmentStatus environmentStatus);
     void backlight(bool state);
 };
 

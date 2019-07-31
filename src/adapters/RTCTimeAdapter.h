@@ -2,11 +2,12 @@
 #define RTCTimeAdapter_H
 
 #include <adapters/TimeAdapter.h>
-#include "../devices/rtc/rtc.h"
+#include <rtc/rtc.h>
 
 class RTCTimeAdapter : public TimeAdapter
 {
 public:
+    void begin();
     virtual uint32_t timestamp();
     virtual String getDateWithoutYearStr();
     virtual String getTimeStr();
@@ -15,7 +16,7 @@ public:
     void adjust(const DateTime &dt);
 
 private:
-    RTC *rtc = RTC::getInstance();
+    RTC rtc;
 };
 
 #endif

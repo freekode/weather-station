@@ -6,3 +6,4 @@
 .pio
 .vscode
 .idea
+cmake-build-debug

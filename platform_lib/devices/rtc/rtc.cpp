@@ -1,18 +1,6 @@
 #include "rtc.h"
 
-RTC *RTC::s_instance = 0;
-
-RTC *RTC::getInstance()
-{
-	if (!s_instance)
-	{
-		s_instance = new RTC;
-	}
-
-	return s_instance;
-};
-
-RTC::RTC()
+void RTC::begin()
 {
 	rtc.begin();
 }

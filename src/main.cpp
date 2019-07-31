@@ -7,17 +7,24 @@ void setup(void)
 {
 	initDevices();
 
+	// bluetoothSerial.println("AT");
+	// bluetoothSerial.println("AT+VERSION");
+	// bluetoothSerial.println("AT+PIN");
+	delay(200);
+
 	printUploadTime();
 	printStarted();
+
 }
 
 void loop(void)
 {
-	long ms = millis();
+    unsigned long ms = millis();
 
 	inputJobExecuter.run(ms);
+	btInputJobExecuter.run(ms);
 	timeJobExecuter.run(ms);
-	weatherJobExecuter.run(ms);
+	environmentJobExecuter.run(ms);
 }
 
 void initDevices()
@@ -25,8 +32,10 @@ void initDevices()
 	Serial.begin(SERIAL_BITRATE);
 	BTSerial.begin(SERIAL_BITRATE);
 
+	timeAdapter.begin();
 	screenAdapter.begin();
-	weatherAdapter.begin();
+	environmentAdapter.begin();
+
 }
 
 void printUploadTime()

@@ -2,9 +2,9 @@
 #define TESTADAPTERS_H
 
 #include <adapters/TimeAdapter.h>
-#include <adapters/WeatherAdapter.h>
+#include <adapters/EnvironmentAdapter.h>
 
-class TestWeatherAdapter : public WeatherAdapter
+class TestEnvironmentAdapter : public EnvironmentAdapter
 {
 private:
     float value1;
@@ -12,7 +12,7 @@ private:
     float value3;
 
 public:
-    TestWeatherAdapter(float value1,
+    TestEnvironmentAdapter(float value1,
                        float value2,
                        float value3) : value1(value1),
                                        value2(value2),
@@ -50,8 +50,8 @@ public:
     {
         return "";
     }
-    virtual void adjust(int year, int month, int day,
-                        int hour, int minute, int second)
+    virtual void adjust(uint16_t year, uint8_t month, uint8_t day,
+                        uint8_t hour, uint8_t min, uint8_t sec)
     {
     }
 };

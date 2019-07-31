@@ -331,6 +331,16 @@ int AltSoftSerial::available(void)
 	return RX_BUFFER_SIZE + head - tail;
 }
 
+int AltSoftSerial::availableForWrite(void)
+{ 
+	uint8_t head, tail;
+	head = tx_buffer_head;
+	tail = tx_buffer_tail;
+
+	if (tail > head) return tail - head;
+	return TX_BUFFER_SIZE + tail - head;
+};
+
 void AltSoftSerial::flushInput(void)
 {
 	rx_buffer_head = rx_buffer_tail;
@@ -347,4 +357,3 @@ void ftm0_isr(void)
 	if (flags & (1<<6) && (FTM0_C6SC & 0x40)) altss_compare_a_interrupt();
 }
 #endif
-

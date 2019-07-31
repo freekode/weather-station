@@ -1,38 +1,15 @@
 #include "SerialAdapter.h"
 
-SerialAdapter::SerialAdapter(Stream &serial) : serial(serial)
-{
-	inputString.reserve(10);
-}
-
-void SerialAdapter::begin() {
-}
-
 String SerialAdapter::receive()
 {
-	if (serial.available())
+	String input = "";
+	while (serial.available() > 0)
 	{
-		char inChar = serial.read();
-		inputString += inChar;
-		if (inChar == '\n')
-		{
-			inputComplete = true;
-		}
+		input += (char)serial.read();
 	}
+	input.trim();
 
-	if (inputComplete)
-	{
-		String input = String(inputString);
-
-		inputString = "";
-		inputComplete = false;
-
-		input.trim();
-
-		return input;
-	}
-
-	return "";
+	return input;
 }
 
 size_t SerialAdapter::print(const __FlashStringHelper *ifsh)

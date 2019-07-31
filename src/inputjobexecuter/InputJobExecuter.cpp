@@ -1,5 +1,7 @@
 #include "InputJobExecuter.h"
 
+#define PARAMS_LENGTH 30
+
 void InputJobExecuter::runInternally()
 {
     String input = serialAdapter.receive();
@@ -8,21 +10,28 @@ void InputJobExecuter::runInternally()
         return;
     }
 
-    char *params[PARAMS_LENGTH] = {NULL};
+    // debug
+    Serial.print("input=");
+    Serial.println(input);
+
+    char *params[PARAMS_LENGTH] = {nullptr};
     parseCommand(input, params);
 
     String command = String(params[0]);
 
-    CommandExecuter *commandExecuter = commandExecuterFactory.getExecuter(command);
-    commandExecuter->execute(params);
+    CommandExecutor *commandExecutor = commandExecuterFactory.getExecutor(command);
+    if (commandExecutor != nullptr) {
+        commandExecutor->execute(serialAdapter, params);
+    }
 }
 
-void InputJobExecuter::parseCommand(String inpput, char *params[])
+
+void InputJobExecuter::parseCommand(const String& input, char *params[])
 {
     char commandChar[70];
     char delims[] = " ";
 
-    inpput.toCharArray(commandChar, 70);
+    input.toCharArray(commandChar, 70);
 
     int i = 0;
     params[i] = strtok(commandChar, delims);

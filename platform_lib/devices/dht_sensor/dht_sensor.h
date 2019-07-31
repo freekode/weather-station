@@ -1,9 +1,11 @@
 #ifndef DHT_Sensor_H
 #define DHT_Sensor_H
 
+#define DHTPIN 2
+#define DHTTYPE DHT22
+
 #include <DHT.h>
 #include <DHT_U.h>
-#include "dht_sensor_config.h"
 
 class DHT_Sensor
 {
