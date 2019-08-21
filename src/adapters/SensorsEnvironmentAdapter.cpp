@@ -6,13 +6,11 @@ void SensorsEnvironmentAdapter::begin() {
     dht.begin();
 }
 
-float SensorsEnvironmentAdapter::pressure()
-{
+float SensorsEnvironmentAdapter::pressure() {
     return bmp.pressure();
 }
 
-float SensorsEnvironmentAdapter::temperature()
-{
+float SensorsEnvironmentAdapter::temperature() {
     return (bmp.temperature() + dht.temperature()) / 2;
 }
 

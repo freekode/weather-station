@@ -3,18 +3,18 @@
 
 #include <stdint.h>
 
-class IntervalJobExecuter
-{
+class IntervalJobExecuter {
 public:
     void run(unsigned long currentMs);
-    IntervalJobExecuter(long interval_ms) : interval_ms(interval_ms){};
+
+    explicit IntervalJobExecuter(long interval_ms) : interval_ms(interval_ms) {};
 
 protected:
     virtual void runInternally() = 0;
 
 private:
-    long interval_ms;
-    long nextTime;
+    unsigned long interval_ms;
+    unsigned long nextTime = 0;
 };
 
 #endif

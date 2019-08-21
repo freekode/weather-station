@@ -5,12 +5,12 @@
 #include "../adapters/SerialAdapter.h"
 #include "inputjobexecuter/commandexecuter/CommandExecutorFactory.h"
 
-class InputJobExecuter : public IntervalJobExecuter
-{
+class InputJobExecuter : public IntervalJobExecuter {
 private:
     SerialAdapter &serialAdapter;
     CommandExecutorFactory &commandExecuterFactory;
-    static void parseCommand(const String& input, char *params[]);
+
+    static void parseCommand(const String &input, char *params[]);
 
 public:
     InputJobExecuter(
@@ -18,10 +18,10 @@ public:
             SerialAdapter &serialAdapter,
             CommandExecutorFactory &commandExecuterFactory) : IntervalJobExecuter(interval_ms),
                                                               serialAdapter(serialAdapter),
-                                                              commandExecuterFactory(commandExecuterFactory){};
+                                                              commandExecuterFactory(commandExecuterFactory) {};
 
 protected:
-    virtual void runInternally();
+    void runInternally() override;
 };
 
 #endif

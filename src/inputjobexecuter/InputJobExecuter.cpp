@@ -2,11 +2,9 @@
 
 #define PARAMS_LENGTH 30
 
-void InputJobExecuter::runInternally()
-{
+void InputJobExecuter::runInternally() {
     String input = serialAdapter.receive();
-    if (input.length() == 0)
-    {
+    if (input.length() == 0) {
         return;
     }
 
@@ -26,8 +24,7 @@ void InputJobExecuter::runInternally()
 }
 
 
-void InputJobExecuter::parseCommand(const String& input, char *params[])
-{
+void InputJobExecuter::parseCommand(const String &input, char *params[]) {
     char commandChar[70];
     char delims[] = " ";
 
@@ -35,8 +32,7 @@ void InputJobExecuter::parseCommand(const String& input, char *params[])
 
     int i = 0;
     params[i] = strtok(commandChar, delims);
-    while (params[i] != NULL || i == PARAMS_LENGTH)
-    {
-        params[++i] = strtok(NULL, delims);
+    while (params[i] != nullptr || i == PARAMS_LENGTH) {
+        params[++i] = strtok(nullptr, delims);
     }
 }

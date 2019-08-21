@@ -26,8 +26,8 @@ float EnvironmentStatus::getPressure() const {
 };
 
 String EnvironmentStatus::toString() const {
-    return "timestamp=" + String(timestamp) + ";" +
-           "temperature=" + String(temperature) + ";" +
-           "humidity=" + String(humidity) + ";" +
-           "pressure=" + String(pressure);
+    return "{\"timestamp\": " + String(timestamp) + "," +
+           "\"temperature\":" + String(temperature) + "," +
+           "\"humidity\":" + String(humidity) + "," +
+           "\"pressure\":" + String(pressure) + "}";
 }

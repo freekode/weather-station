@@ -2,7 +2,6 @@
 #define ADAPTER_H
 
 #include <AltSoftSerial.h>
-#include <environmentstatus/EnvironmentStatusRepositoryFactory.h>
 #include "adapters/ScreenAdapter.h"
 #include "adapters/SerialAdapter.h"
 #include "adapters/RTCTimeAdapter.h"

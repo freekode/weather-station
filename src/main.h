@@ -6,6 +6,7 @@
 void initDevices();
 
 void printUploadTime();
+
 void printStarted();
 
 #endif

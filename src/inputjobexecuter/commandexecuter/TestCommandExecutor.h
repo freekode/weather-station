@@ -5,13 +5,11 @@
 
 #include "../../adapters/SerialAdapter.h"
 
-class TestCommandExecutor : public CommandExecutor
-{
+class TestCommandExecutor : public CommandExecutor {
 private:
 public:
-    virtual void execute(SerialAdapter &serialAdapter, char *params[])
-    {
-        serialAdapter.println("passed");
+    void execute(SerialAdapter &serialAdapter, char *params[]) override {
+        serialAdapter.println("true");
     };
 };
 

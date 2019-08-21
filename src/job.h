@@ -4,7 +4,7 @@
 #define INPUT_DELAY_MS 200L
 #define BT_INPUT_DELAY_MS 500L
 #define TIME_DELAY_MS 1000L
-#define WEATHER_DELAY_MS 60 * 1000L
+#define WEATHER_DELAY_MS 60000L
 
 #include <adapter.h>
 
@@ -13,15 +13,18 @@
 #include "inputjobexecuter/InputJobExecuter.h"
 #include "inputjobexecuter/commandexecuter/CommandExecutorFactory.h"
 
-EnvironmentStatusRepositoryFactory repositoryFactory = EnvironmentStatusRepositoryFactory(timeAdapter, environmentAdapter);
-EnvironmentStatusRepository *repository = repositoryFactory.get();
+EnvironmentStatusFactory *factory = new EnvironmentStatusFactory(timeAdapter, environmentAdapter);
+EnvironmentStatusRepository *repository = new EnvironmentStatusRepository(*factory);
 
 TestCommandExecutor *testCommandExecuter = new TestCommandExecutor();
 RamCommandExecutor *ramCommandExecuter = new RamCommandExecutor();
 AdjustTimeCommandExecutor *adjustTimeCommandExecuter = new AdjustTimeCommandExecutor(timeAdapter);
 EnvironmentCommandExecutor *environmentCommandExecuter = new EnvironmentCommandExecutor(*repository);
-CommandExecutorFactory commandExecuterFactory = CommandExecutorFactory(testCommandExecuter, ramCommandExecuter,
-                                                                       adjustTimeCommandExecuter, environmentCommandExecuter);
+UptimeCommandExecutor *uptimeCommandExecutor = new UptimeCommandExecutor();
+
+CommandExecutorFactory commandExecuterFactory = CommandExecutorFactory(
+        testCommandExecuter, ramCommandExecuter, adjustTimeCommandExecuter, environmentCommandExecuter,
+        uptimeCommandExecutor);
 
 InputJobExecuter inputJobExecuter(INPUT_DELAY_MS, softwareSerial, commandExecuterFactory);
 InputJobExecuter btInputJobExecuter(BT_INPUT_DELAY_MS, bluetoothSerial, commandExecuterFactory);

@@ -5,21 +5,18 @@
 
 #include "../../adapters/SerialAdapter.h"
 
-class RamCommandExecutor : public CommandExecutor
-{
+class RamCommandExecutor : public CommandExecutor {
 private:
-    String getFreeRam()
-    {
+    String getFreeRam() {
         extern int __heap_start, *__brkval;
         int v;
-        int value = (int)&v - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
+        int value = (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 
         return String(value);
     }
 
 public:
-    virtual void execute(SerialAdapter &serialAdapter, char *params[])
-    {
+    void execute(SerialAdapter &serialAdapter, char *params[]) override {
         serialAdapter.println(getFreeRam());
     };
 };

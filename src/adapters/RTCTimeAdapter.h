@@ -4,15 +4,19 @@
 #include <adapters/TimeAdapter.h>
 #include <rtc/rtc.h>
 
-class RTCTimeAdapter : public TimeAdapter
-{
+class RTCTimeAdapter : public TimeAdapter {
 public:
     void begin();
-    virtual uint32_t timestamp();
-    virtual String getDateWithoutYearStr();
-    virtual String getTimeStr();
-    virtual void adjust(uint16_t year, uint8_t month, uint8_t day,
-                        uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0);
+
+    uint32_t timestamp() override;
+
+    String getDateWithoutYearStr() override;
+
+    String getTimeStr() override;
+
+    void adjust(uint16_t year, uint8_t month, uint8_t day,
+                        uint8_t hour, uint8_t min, uint8_t sec) override;
+
     void adjust(const DateTime &dt);
 
 private:

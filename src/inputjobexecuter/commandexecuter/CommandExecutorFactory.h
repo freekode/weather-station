@@ -8,25 +8,30 @@
 #include "RamCommandExecutor.h"
 #include "AdjustTimeCommandExecutor.h"
 #include "EnvironmentCommandExecutor.h"
+#include "UptimeCommandExecutor.h"
 
-class CommandExecutorFactory
-{
+class CommandExecutorFactory {
 private:
     TestCommandExecutor *testCommandExecuter;
     RamCommandExecutor *ramCommandExecuter;
     AdjustTimeCommandExecutor *adjustTimeCommandExecuter;
     EnvironmentCommandExecutor *environmentCommandExecuter;
+    UptimeCommandExecutor *uptimeCommandExecutor;
 
 public:
     CommandExecutorFactory(
             TestCommandExecutor *testCommandExecuter,
             RamCommandExecutor *ramCommandExecuter,
             AdjustTimeCommandExecutor *adjustTimeCommandExecuter,
-            EnvironmentCommandExecutor *environmentCommandExecuter) : testCommandExecuter(testCommandExecuter),
-                                                                      ramCommandExecuter(ramCommandExecuter),
-                                                                      adjustTimeCommandExecuter(adjustTimeCommandExecuter),
-                                                                      environmentCommandExecuter(environmentCommandExecuter){};
-    CommandExecutor *getExecutor(const String& command);
+            EnvironmentCommandExecutor *environmentCommandExecuter,
+            UptimeCommandExecutor *uptimeCommandExecutor) :
+            testCommandExecuter(testCommandExecuter),
+            ramCommandExecuter(ramCommandExecuter),
+            adjustTimeCommandExecuter(adjustTimeCommandExecuter),
+            environmentCommandExecuter(environmentCommandExecuter),
+            uptimeCommandExecutor(uptimeCommandExecutor) {};
+
+    CommandExecutor *getExecutor(const String &);
 };
 
 #endif

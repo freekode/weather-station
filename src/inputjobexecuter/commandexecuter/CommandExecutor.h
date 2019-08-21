@@ -3,8 +3,7 @@
 
 #include "../../adapters/SerialAdapter.h"
 
-class CommandExecutor
-{
+class CommandExecutor {
 public:
     virtual void execute(SerialAdapter &serialAdapter, char *params[]) = 0;
 };
