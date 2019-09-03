@@ -12,6 +12,8 @@
 #include "environmentjobexecuter/EnvironmentJobExecuter.h"
 #include "inputjobexecuter/InputJobExecuter.h"
 #include "inputjobexecuter/commandexecuter/CommandExecutorFactory.h"
+#include "backlightexecutor/BacklightOffJobExecutor.h"
+#include "backlightexecutor/BacklightOnJobExecutor.h"
 
 EnvironmentStatusFactory *factory = new EnvironmentStatusFactory(timeAdapter, environmentAdapter);
 EnvironmentStatusRepository *repository = new EnvironmentStatusRepository(*factory);
@@ -30,5 +32,8 @@ InputJobExecuter inputJobExecuter(INPUT_DELAY_MS, softwareSerial, commandExecute
 InputJobExecuter btInputJobExecuter(BT_INPUT_DELAY_MS, bluetoothSerial, commandExecuterFactory);
 TimeJobExecuter timeJobExecuter(TIME_DELAY_MS, screenAdapter, timeAdapter);
 EnvironmentJobExecuter environmentJobExecuter(WEATHER_DELAY_MS, screenAdapter, *repository);
+
+BacklightOffJobExecutor backlightOffJobExecutor(23, 00, 0, screenAdapter);
+BacklightOnJobExecutor backlightOnJobExecutor(7, 0, 0, screenAdapter);
 
 #endif

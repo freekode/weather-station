@@ -7,23 +7,21 @@
 void setup(void) {
     initDevices();
 
-    // bluetoothSerial.println("AT");
-    // bluetoothSerial.println("AT+VERSION");
-    // bluetoothSerial.println("AT+PIN");
-//    delay(200);
-
     printUploadTime();
     printStarted();
-
 }
 
 void loop(void) {
     unsigned long ms = millis();
+    const DateTimeValue &now = timeAdapter.now();
 
     inputJobExecuter.run(ms);
     btInputJobExecuter.run(ms);
     timeJobExecuter.run(ms);
     environmentJobExecuter.run(ms);
+
+    backlightOnJobExecutor.run(now.hour(), now.minute(), now.second());
+    backlightOffJobExecutor.run(now.hour(), now.minute(), now.second());
 }
 
 void initDevices() {
