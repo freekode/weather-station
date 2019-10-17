@@ -33,7 +33,7 @@ InputJobExecuter btInputJobExecuter(BT_INPUT_DELAY_MS, bluetoothSerial, commandE
 TimeJobExecuter timeJobExecuter(TIME_DELAY_MS, screenAdapter, timeAdapter);
 EnvironmentJobExecuter environmentJobExecuter(WEATHER_DELAY_MS, screenAdapter, *repository);
 
-BacklightOffJobExecutor backlightOffJobExecutor(23, 00, 0, screenAdapter);
+BacklightOffJobExecutor backlightOffJobExecutor(22, 15, 0, screenAdapter);
 BacklightOnJobExecutor backlightOnJobExecutor(7, 0, 0, screenAdapter);
 
 #endif
